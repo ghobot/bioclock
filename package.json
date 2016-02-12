@@ -1,0 +1,26 @@
+{
+  "name": "live-polling",
+  "version": "0.0.1",
+  "description": "polling for game of life",
+  "main": "app-server.js",
+  "dependencies": {
+    "babel-core": "^6.4.5",
+    "babel-loader": "^6.2.2",
+    "babel-preset-react": "^6.5.0",
+    "bootstrap": "^3.3.6",
+    "express": "^4.13.4",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "react-router": "^2.0.0",
+    "socket.io": "^1.4.5",
+    "socket.io-client": "^1.4.5",
+    "webpack": "^1.12.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "prestart": "webpack",
+    "start": "node app-server.js"
+  },
+  "author": "Greg Dorsainville",
+  "license": "MIT"
+}

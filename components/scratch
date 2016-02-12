@@ -1,0 +1,76 @@
+'use strict';
+
+
+var React = require('react');
+var ReactDOM = require('react-dom');
+var Router = require('react-router');
+var Route = Router.Route;
+var DefaultRoute = Router.DefaultRoute;
+
+var APP = require('./components/APP');
+var Users = require('./components/Users').default;
+var Dish = require('./components/Dish');
+var Info = require('./components/Info');
+
+var routes = (
+	<Route name="app" path="/" handler={APP}>
+		<DefaultRoute handler={Users} />
+		<Route name="dish" path="dish" handler={Dish}></Route>
+		<Route name="info" path="info" handler={Info}></Route>
+	</Route>
+);
+
+ReactDOM.render(<Router>{routes}</Router>, document.getElementById('app')) ;
+
+//ReactDOM.render(<APP />, document.getElementById('app'));
+
+// Router.run(routes, function(Handler) {
+// 	ReactDOM.render(<Handler />, document.getElementById('app'));
+// });
+
+var userStore = require('..');
+
+function Constructor() {
+	this.name = 'sam';
+}
+
+Constructor.prototype.setName(newName) {
+	this.name = newName;
+}
+
+var obj = new Constructor();
+var setName = obj.setName;
+setName('bla');
+
+obj.setName('bda')
+
+function createModule(params) {
+    var name = 'jerko';
+
+	function getUserInfo() {
+		return request('https://...');
+	}
+
+	return { getUserInfo };
+}
+
+function createModule2(params) {
+	let mod = createModule(params);
+
+    let origUserInfo = mod.getUserInfo;
+	mod.getUserInfo = function() {
+       return origUserInfo(dfafg);
+	}
+
+	return mod;
+}
+
+function myInfoComponent() {
+	
+	var info = userStore.getUserInfo();
+	var roles = info.roles.map((role, i) => <li key={i}>{role}</li>);
+
+	return (<ul>
+		{roles}
+	</ul>);
+}
