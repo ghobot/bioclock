@@ -1,6 +1,6 @@
-var React = require('react');
+const React = require('react');
 
-var Header = React.createClass({
+const Header = React.createClass({
 
 	propTypes: {
 		title: React.PropTypes.string.isRequired

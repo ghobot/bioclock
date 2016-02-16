@@ -74,3 +74,15 @@ function myInfoComponent() {
 		{roles}
 	</ul>);
 }
+
+
+
+// <Display if={!this.props.member.name} >
+					// 	<h3>Join to add a reagent to the dish.</h3>
+					// 	<Join emit={this.props.emit} />	
+					// </Display>				
+					
+					// <Display if={this.props.member.name} >
+					// 	<h3>{this.props.member.name} , add the reagent</h3>
+						
+					// </Display>

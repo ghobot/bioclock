@@ -1,9 +1,11 @@
-var React = require ('react');
+'use strict';
+const React = require ('react');
 
-var Info = React.createClass({
-	
+const Info = React.createClass({	
 	render() {
-		return (<h1>Info</h1>);
+		return (
+			<h1>Info</h1>
+		);
 	}
 });
 

@@ -1,27 +1,56 @@
-var React = require('react');
-var ReactRouter = require('react-router');
-var io = require('socket.io-client');
-var Header = require('./parts/Header');
+'use strict';
+const React = require('react');
+const ReactRouter = require('react-router');
+const io = require('socket.io-client');
+const Header = require('./parts/Header');
 
-var APP = React.createClass({
-
+const APP = React.createClass({
 	getInitialState() {
 		return {
 			status: 'disconnected',
-			title: ''
+			title: '',
+			member: {},
+			memberAddingReagent: {},
+			servings: 0,
+			users: []
 		};
 	},
 
-	componentWillMount() {
+	componentWillMount() { //listeners to events from server with their respective event handlers
 		this.socket = io('http://localhost:4000'); //this creates a socket at our localhost
 		this.socket.on('connect', this.connect); //after this socket is connected, we will ruin a custom connect function
 		this.socket.on('disconnect', this.disconnect);
 		this.socket.on('welcome', this.welcome);
+		this.socket.on('joined', this.joined);
+		this.socket.on('addedReagent', this.addedReagent);  
+		this.socket.on('users', this.updateUsers );
+	},
+
+	emit(eventName, payload) {
+		this.socket.emit(eventName, payload);
 	},
 
 	connect() {
+	// check to see if there is member info saved to the client
+		let member = null;
+		try {
+			const storedMember = sessionStorage.getItem('member');
+			member = storedMember ?
+				JSON.parse(storedMember) :
+				null;
+		} catch (e) {
+			console.warn('Unable to retrieve member from sessionStorage');
+		}
+
+		// if a member exists, just join that member again
+		if (member) {
+			this.emit('addUser', member);
+		}
+
 		//console.log("Connected: " + this.socket.id);
-		this.setState({ status: 'connected'});
+		this.setState({
+			status: 'connected'
+		});
 	},
 
 	disconnect() {
@@ -29,14 +58,46 @@ var APP = React.createClass({
 	},
 
 	welcome(serverState) {
-		this.setState({ title: serverState.title });
+		this.setState({ 
+			title: serverState.title 
+		});
 	},
+
+	joined(member) {
+		sessionStorage.setItem('member', JSON.stringify(member)); //adds a member node to session storage in JSON format 	
+		this.setState({ 
+			member : member 
+		});
+		//console.log("member check: %s" , member.name);
+	},
+
+	updateUsers(newUsersArray) {
+		this.setState({ 
+			users : newUsersArray
+		});
+	},
+
+	addedReagent(payload){	 	
+	 	this.setState({
+	 		memberAddingReagent: payload.id
+	 	});
+
+	 	this.setState({
+	 		servings: (this.servings + payload.serving)
+	 	});
+	 },
 
 	render() {		
 		return (
 			<div>
-				<Header title={this.state.title} status={this.state.status}/>
-				{this.props.children}
+				<Header title={this.state.title} status={this.state.status}/>				
+				{React.cloneElement(this.props.children, { // all of the props passed down to the components
+					status: this.state.status,
+					emit : this.emit,
+					member : this.state.member,
+					users: this.state.users,
+					servings: this.state.servings
+				})}
 			</div>
 		);
 	}

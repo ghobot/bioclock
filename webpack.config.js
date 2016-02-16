@@ -10,10 +10,12 @@ module.exports = {
 				loader: 'babel',
 				query:
       			{
-        			presets:['react']
+        			presets:[
+	        			"es2015",
+    	    			"react"
+        			]
  			    }
 			}
 		]
 	}
-
 };

@@ -2,7 +2,7 @@ var React = require('react');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
-//var IndexRoute = ReactRouter.IndexRoute;
+var IndexRoute = ReactRouter.IndexRoute;
 
 var APP = require('../components/APP');
 var Users = require('../components/Users');
@@ -14,6 +14,7 @@ var routes = (
   		<Route path="info" component={Info}/>
   		<Route path="dish" component={Dish}/>
   		<Route path="users" component={Users}/>
+  		<IndexRoute component={Users}/>
 	</Route>
 );
 

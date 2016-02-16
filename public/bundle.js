@@ -44,6 +44,8 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 	var ReactRouter = __webpack_require__(159);
@@ -52,12 +54,6 @@
 	var routes = __webpack_require__(216);
 
 	ReactDOM.render(React.createElement(Router, { history: hashHistory, routes: routes }), document.getElementById('app'));
-
-	//ReactDOM.render(<APP />, document.getElementById('app'));
-
-	// Router.run(routes, function(Handler) {
-	// 	ReactDOM.render(<Handler />, document.getElementById('app'));
-	// });
 
 /***/ },
 /* 1 */
@@ -24689,23 +24685,26 @@
 /* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	var Router = ReactRouter.Router;
 	var Route = ReactRouter.Route;
-	//var IndexRoute = ReactRouter.IndexRoute;
+	var IndexRoute = ReactRouter.IndexRoute;
 
 	var APP = __webpack_require__(217);
 	var Users = __webpack_require__(269);
-	var Dish = __webpack_require__(270);
-	var Info = __webpack_require__(271);
+	var Dish = __webpack_require__(273);
+	var Info = __webpack_require__(274);
 
 	var routes = React.createElement(
 	  Route,
 	  { path: '/', component: APP },
 	  React.createElement(Route, { path: 'info', component: Info }),
 	  React.createElement(Route, { path: 'dish', component: Dish }),
-	  React.createElement(Route, { path: 'users', component: Users })
+	  React.createElement(Route, { path: 'users', component: Users }),
+	  React.createElement(IndexRoute, { component: Users })
 	);
 
 	module.exports = routes;
@@ -24714,6 +24713,8 @@
 /* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	var io = __webpack_require__(218);
@@ -24721,40 +24722,83 @@
 
 	var APP = React.createClass({
 		displayName: 'APP',
-
-		getInitialState() {
+		getInitialState: function getInitialState() {
 			return {
 				status: 'disconnected',
-				title: ''
+				title: '',
+				member: {},
+				memberAddingReagent: {},
+				servings: 0,
+				users: []
 			};
 		},
-
-		componentWillMount() {
+		componentWillMount: function componentWillMount() {
+			//listeners to events from server with their respective event handlers
 			this.socket = io('http://localhost:4000'); //this creates a socket at our localhost
 			this.socket.on('connect', this.connect); //after this socket is connected, we will ruin a custom connect function
 			this.socket.on('disconnect', this.disconnect);
 			this.socket.on('welcome', this.welcome);
+			this.socket.on('joined', this.joined);
+			this.socket.on('addedReagent', this.addedReagent);
+			this.socket.on('users', this.updateUsers);
 		},
+		emit: function emit(eventName, payload) {
 
-		connect() {
+			this.socket.emit(eventName, payload);
+			//console.log("eventname is %s", eventName);
+			//console.log("from emit, payload is %s", payload);
+		},
+		connect: function connect() {
+			// check to see if there is member info saved to the client
+			var member = null;
+			try {
+				var storedMember = sessionStorage.getItem('member');
+				member = storedMember ? JSON.parse(storedMember) : null;
+			} catch (e) {
+				console.warn('Unable to retrieve member from sessionStorage');
+			}
+
+			// if a member exists, just join that member again
+			if (member) {
+				this.emit('addUser', member);
+			}
+
 			//console.log("Connected: " + this.socket.id);
-			this.setState({ status: 'connected' });
+			this.setState({
+				status: 'connected'
+			});
 		},
-
-		disconnect() {
+		disconnect: function disconnect() {
 			this.setState({ status: 'disconnected' });
 		},
-
-		welcome(serverState) {
+		welcome: function welcome(serverState) {
 			this.setState({ title: serverState.title });
 		},
-
-		render() {
+		joined: function joined(member) {
+			sessionStorage.setItem('member', JSON.stringify(member)); //adds a member node to session storage in JSON format 	
+			this.setState({ member: member });
+			//console.log("member check: %s" , member.name);
+		},
+		updateUsers: function updateUsers(newUsersArray) {
+			this.setState({ users: newUsersArray });
+		},
+		addedReagent: function addedReagent(payload) {
+			this.setState({ memberAddingReagent: payload.id });
+			this.setState({ servings: this.servings + payload.serving });
+		},
+		render: function render() {
 			return React.createElement(
 				'div',
 				null,
 				React.createElement(Header, { title: this.state.title, status: this.state.status }),
-				this.props.children
+				React.cloneElement(this.props.children, { // all of the props passed down to the components
+					status: this.state.status,
+					emit: this.emit,
+					member: this.state.member,
+					users: this.state.users,
+					servings: this.state.servings
+
+				})
 			);
 		}
 	});
@@ -32378,22 +32422,24 @@
 /* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var React = __webpack_require__(1);
 
 	var Header = React.createClass({
 		displayName: 'Header',
 
+
 		propTypes: {
 			title: React.PropTypes.string.isRequired
 		},
 
-		getDefaultProps() {
+		getDefaultProps: function getDefaultProps() {
 			return {
 				status: 'disconnected'
 			};
 		},
-
-		render() {
+		render: function render() {
 			return React.createElement(
 				'header',
 				{ className: 'row' },
@@ -32421,16 +32467,66 @@
 /* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var React = __webpack_require__(1);
+	var Display = __webpack_require__(270);
+	var Join = __webpack_require__(271);
+	var Addreagent = __webpack_require__(272);
 
 	var Users = React.createClass({
 		displayName: 'Users',
-
-		render() {
+		render: function render() {
 			return React.createElement(
-				'h1',
+				'div',
 				null,
-				'Users'
+				React.createElement(
+					Display,
+					{ 'if': this.props.status === 'connected' },
+					React.createElement(
+						Display,
+						{ 'if': this.props.member.name, className: 'container' },
+						React.createElement(
+							'h3',
+							null,
+							this.props.member.name,
+							' , add the reagent'
+						),
+						React.createElement(
+							'div',
+							{ className: 'row' },
+							React.createElement(Addreagent, { emit: this.props.emit })
+						),
+						React.createElement(
+							'div',
+							{ className: 'row' },
+							React.createElement(
+								'h4',
+								null,
+								' ',
+								this.props.users.length,
+								' users connected.'
+							),
+							React.createElement(
+								'h4',
+								null,
+								' ',
+								this.props.servings,
+								' servings. '
+							)
+						)
+					),
+					React.createElement(
+						Display,
+						{ 'if': !this.props.member.name },
+						React.createElement(
+							'h3',
+							null,
+							'Join to add a reagent to the dish.'
+						),
+						React.createElement(Join, { emit: this.props.emit })
+					)
+				)
 			);
 		}
 	});
@@ -32441,12 +32537,112 @@
 /* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	var React = __webpack_require__(1);
+
+	var Display = React.createClass({
+		displayName: 'Display',
+		render: function render() {
+			return this.props.if ? React.createElement(
+				'div',
+				null,
+				this.props.children
+			) : null;
+		}
+	});
+
+	module.exports = Display;
+
+/***/ },
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+
+	var Join = React.createClass({
+		displayName: 'Join',
+		addUser: function addUser() {
+			var userName = ReactDOM.findDOMNode(this.refs.Username).value;
+			//console.log(userName);
+			this.props.emit('addUser', { user: userName });
+		},
+		render: function render() {
+			return React.createElement(
+				'form',
+				{ action: 'javascript:void(0)', onSubmit: this.addUser, className: '' },
+				React.createElement(
+					'div',
+					{ className: 'form-group col-xs-8' },
+					React.createElement(
+						'label',
+						null,
+						'Name'
+					),
+					React.createElement('input', { ref: 'Username',
+						className: 'form-control',
+						placeholder: 'Enter your name',
+						required: true })
+				),
+				React.createElement(
+					'button',
+					{ ref: 'join', href: '#', className: 'btn btn-primary btn-lg col-xs-8 ' },
+					'Join to add Reagent'
+				)
+			);
+		}
+	});
+
+	module.exports = Join;
+
+/***/ },
+/* 272 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+
+	var Addreagent = React.createClass({
+		displayName: 'Addreagent',
+		addReagent: function addReagent() {
+			//var userName = {this.props.member.name};
+			var _message = "A user has added Reagent to the dish.";
+			var serving = 1;
+			console.log(_message);
+			this.props.emit('addReagent', {
+				add: serving,
+				message: _message });
+		},
+		render: function render() {
+			return React.createElement(
+				'form',
+				{ action: 'javascript:void(0)', onSubmit: this.addReagent },
+				React.createElement(
+					'button',
+					{ ref: 'reagent', href: '#', className: 'btn btn-success btn-lg col-xs-8' },
+					'Add Reagent'
+				)
+			);
+		}
+	});
+
+	module.exports = Addreagent;
+
+/***/ },
+/* 273 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	var React = __webpack_require__(1);
 
 	var Dish = React.createClass({
 		displayName: 'Dish',
-
-		render() {
+		render: function render() {
 			return React.createElement(
 				'h1',
 				null,
@@ -32458,15 +32654,16 @@
 	module.exports = Dish;
 
 /***/ },
-/* 271 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	var React = __webpack_require__(1);
 
 	var Info = React.createClass({
 		displayName: 'Info',
-
-		render() {
+		render: function render() {
 			return React.createElement(
 				'h1',
 				null,
