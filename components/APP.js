@@ -3,6 +3,7 @@ const React = require('react');
 const ReactRouter = require('react-router');
 const io = require('socket.io-client');
 const Header = require('./parts/Header');
+let servings = 0;
 
 const APP = React.createClass({
 	getInitialState() {
@@ -11,12 +12,12 @@ const APP = React.createClass({
 			title: '',
 			member: {},
 			memberAddingReagent: {},
-			servings: 0,
+			servings: servings,
 			users: []
 		};
 	},
-
-	componentWillMount() { //listeners to events from server with their respective event handlers
+	//listeners to events from server with their respective event handlers
+	componentWillMount() { 
 		this.socket = io('http://localhost:4000'); //this creates a socket at our localhost
 		this.socket.on('connect', this.connect); //after this socket is connected, we will ruin a custom connect function
 		this.socket.on('disconnect', this.disconnect);
@@ -31,7 +32,7 @@ const APP = React.createClass({
 	},
 
 	connect() {
-	// check to see if there is member info saved to the client
+		// check to see if there is member info saved to the client
 		let member = null;
 		try {
 			const storedMember = sessionStorage.getItem('member');
@@ -64,7 +65,8 @@ const APP = React.createClass({
 	},
 
 	joined(member) {
-		sessionStorage.setItem('member', JSON.stringify(member)); //adds a member node to session storage in JSON format 	
+		//adds a member node to session storage in JSON format 	
+		sessionStorage.setItem('member', JSON.stringify(member)); 
 		this.setState({ 
 			member : member 
 		});
@@ -78,20 +80,23 @@ const APP = React.createClass({
 	},
 
 	addedReagent(payload){	 	
+
 	 	this.setState({
 	 		memberAddingReagent: payload.id
 	 	});
 
 	 	this.setState({
-	 		servings: (this.servings + payload.serving)
+	 		servings: (servings += 1)
 	 	});
 	 },
 
-	render() {		
+	render() {	
+		// all of the props passed down to the components	
 		return (
 			<div>
+				
 				<Header title={this.state.title} status={this.state.status}/>				
-				{React.cloneElement(this.props.children, { // all of the props passed down to the components
+				{React.cloneElement(this.props.children, { 
 					status: this.state.status,
 					emit : this.emit,
 					member : this.state.member,

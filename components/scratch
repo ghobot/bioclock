@@ -86,3 +86,7 @@ function myInfoComponent() {
 					// 	<h3>{this.props.member.name} , add the reagent</h3>
 						
 					// </Display>
+
+
+					jshintloader
+					jscs
