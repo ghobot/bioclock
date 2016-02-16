@@ -24,12 +24,13 @@ const Join = React.createClass({
 					<input ref="Username" 
 						className="form-control" 
 						placeholder="Enter your name" 
-						required  />
+						required 
+					/>
 				</div>	
 				<button ref="join" 
 					href="#" 
 					className="btn btn-primary btn-lg col-xs-8 ">
-					Join to add Reagent
+						Join to add Reagent
 				</button>
 			</form>						
 		);

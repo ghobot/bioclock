@@ -24719,6 +24719,7 @@
 	var ReactRouter = __webpack_require__(159);
 	var io = __webpack_require__(218);
 	var Header = __webpack_require__(268);
+	var servings = 0;
 
 	var APP = React.createClass({
 		displayName: 'APP',
@@ -24728,7 +24729,7 @@
 				title: '',
 				member: {},
 				memberAddingReagent: {},
-				servings: 0,
+				servings: servings,
 				users: []
 			};
 		},
@@ -24743,10 +24744,7 @@
 			this.socket.on('users', this.updateUsers);
 		},
 		emit: function emit(eventName, payload) {
-
 			this.socket.emit(eventName, payload);
-			//console.log("eventname is %s", eventName);
-			//console.log("from emit, payload is %s", payload);
 		},
 		connect: function connect() {
 			// check to see if there is member info saved to the client
@@ -24772,32 +24770,44 @@
 			this.setState({ status: 'disconnected' });
 		},
 		welcome: function welcome(serverState) {
-			this.setState({ title: serverState.title });
+			this.setState({
+				title: serverState.title
+			});
 		},
 		joined: function joined(member) {
 			sessionStorage.setItem('member', JSON.stringify(member)); //adds a member node to session storage in JSON format 	
-			this.setState({ member: member });
+			this.setState({
+				member: member
+			});
 			//console.log("member check: %s" , member.name);
 		},
 		updateUsers: function updateUsers(newUsersArray) {
-			this.setState({ users: newUsersArray });
+			this.setState({
+				users: newUsersArray
+			});
 		},
 		addedReagent: function addedReagent(payload) {
-			this.setState({ memberAddingReagent: payload.id });
-			this.setState({ servings: this.servings + payload.serving });
+
+			this.setState({
+				memberAddingReagent: payload.id
+			});
+
+			this.setState({
+				servings: servings += 1
+			});
 		},
 		render: function render() {
+			// all of the props passed down to the components	
 			return React.createElement(
 				'div',
 				null,
 				React.createElement(Header, { title: this.state.title, status: this.state.status }),
-				React.cloneElement(this.props.children, { // all of the props passed down to the components
+				React.cloneElement(this.props.children, {
 					status: this.state.status,
 					emit: this.emit,
 					member: this.state.member,
 					users: this.state.users,
 					servings: this.state.servings
-
 				})
 			);
 		}
@@ -32485,7 +32495,8 @@
 					{ 'if': this.props.status === 'connected' },
 					React.createElement(
 						Display,
-						{ 'if': this.props.member.name, className: 'container' },
+						{ 'if': this.props.member.name,
+							className: 'container' },
 						React.createElement(
 							'h3',
 							null,
@@ -32503,16 +32514,14 @@
 							React.createElement(
 								'h4',
 								null,
-								' ',
 								this.props.users.length,
 								' users connected.'
 							),
 							React.createElement(
 								'h4',
 								null,
-								' ',
 								this.props.servings,
-								' servings. '
+								' servings.'
 							)
 						)
 					),
@@ -32568,12 +32577,16 @@
 		addUser: function addUser() {
 			var userName = ReactDOM.findDOMNode(this.refs.Username).value;
 			//console.log(userName);
-			this.props.emit('addUser', { user: userName });
+			this.props.emit('addUser', {
+				user: userName
+			});
 		},
 		render: function render() {
 			return React.createElement(
 				'form',
-				{ action: 'javascript:void(0)', onSubmit: this.addUser, className: '' },
+				{ action: 'javascript:void(0)',
+					onSubmit: this.addUser,
+					className: '' },
 				React.createElement(
 					'div',
 					{ className: 'form-group col-xs-8' },
@@ -32589,7 +32602,9 @@
 				),
 				React.createElement(
 					'button',
-					{ ref: 'join', href: '#', className: 'btn btn-primary btn-lg col-xs-8 ' },
+					{ ref: 'join',
+						href: '#',
+						className: 'btn btn-primary btn-lg col-xs-8 ' },
 					'Join to add Reagent'
 				)
 			);
@@ -32612,10 +32627,13 @@
 			//var userName = {this.props.member.name};
 			var _message = "A user has added Reagent to the dish.";
 			var serving = 1;
+
 			console.log(_message);
+
 			this.props.emit('addReagent', {
 				add: serving,
-				message: _message });
+				message: _message
+			});
 		},
 		render: function render() {
 			return React.createElement(
@@ -32623,7 +32641,9 @@
 				{ action: 'javascript:void(0)', onSubmit: this.addReagent },
 				React.createElement(
 					'button',
-					{ ref: 'reagent', href: '#', className: 'btn btn-success btn-lg col-xs-8' },
+					{ ref: 'reagent',
+						href: '#',
+						className: 'btn btn-success btn-lg col-xs-8' },
 					'Add Reagent'
 				)
 			);

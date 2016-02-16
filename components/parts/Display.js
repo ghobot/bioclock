@@ -1,10 +1,13 @@
-var React = require('react');
+const React = require('react');
 
-var Display = React.createClass({
+const Display = React.createClass({
 	render() {
-		return (this.props.if) ? <div>{this.props.children}</div> : null;
+		return (this.props.if) ? 
+			<div>
+				{this.props.children}
+			</div> : 
+			null;
 	}
-
 });
 
 module.exports = Display;
