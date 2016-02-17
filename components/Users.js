@@ -9,10 +9,10 @@ const Users = React.createClass({
 		return (
 			<div>
 				<Display if={this.props.status === 'connected'}>
-					<Display if={this.props.member.name} 
+					<Display if={this.props.member.user} 
 						className="container" >					
 						<h3>
-							{this.props.member.name} , add the reagent
+							{this.props.member.user} , add the reagent
 						</h3>
 						<div className="row">
 							<Addreagent emit={this.props.emit} />
@@ -26,7 +26,7 @@ const Users = React.createClass({
 							</h4>
 						</div>
 					</Display>
-					<Display if={!this.props.member.name} >
+					<Display if={!this.props.member.user} >
 						<h3>
 							Join to add a reagent to the dish.
 						</h3>

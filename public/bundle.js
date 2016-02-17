@@ -24761,7 +24761,7 @@
 
 			// if a member exists, just join that member again
 			if (member) {
-				this.emit('addUser', member);
+				this.emit('refreshUser', member);
 			}
 
 			//console.log("Connected: " + this.socket.id);
@@ -32504,12 +32504,12 @@
 					{ 'if': this.props.status === 'connected' },
 					React.createElement(
 						Display,
-						{ 'if': this.props.member.name,
+						{ 'if': this.props.member.user,
 							className: 'container' },
 						React.createElement(
 							'h3',
 							null,
-							this.props.member.name,
+							this.props.member.user,
 							' , add the reagent'
 						),
 						React.createElement(
@@ -32536,7 +32536,7 @@
 					),
 					React.createElement(
 						Display,
-						{ 'if': !this.props.member.name },
+						{ 'if': !this.props.member.user },
 						React.createElement(
 							'h3',
 							null,

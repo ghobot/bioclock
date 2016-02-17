@@ -20,7 +20,7 @@ io.sockets.on('connection', function(socket){
 		if (member) {
 			users.splice(users.indexOf(member), 1);
 			io.sockets.emit('users', users);
-			console.log("Left: %s (%s audience members)", member.name, users.length)
+			console.log("Left: %s (%s audience members)", member.user, users.length)
 		}
 
 		connections.splice(connections.indexOf(socket), 1);
@@ -32,22 +32,24 @@ io.sockets.on('connection', function(socket){
 	socket.on('addUser' , function(payload) {
 		const newUser = {
 			id: this.id,
-			name: payload.user
+			user: payload.user
 		};
 
 		this.emit('joined', newUser);
 		users.push(newUser);
 		io.sockets.emit('users', users);
 		
-		console.log("%s joined.", newUser.name);
+		console.log("%s joined.", newUser.user);
 
 	});
 
 	socket.on('refreshUser', function(payload) {
+		
+
 		this.emit('joined', payload);
 		users.push(payload);
 		//io.sockets.emit('users', users);
-		console.log("%s refreshed. %s", payload.name, payload.id);
+		console.log("%s refreshed. %s", payload.user, payload.id);
 
 	});
 

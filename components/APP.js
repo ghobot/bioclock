@@ -45,7 +45,7 @@ const APP = React.createClass({
 
 		// if a member exists, just join that member again
 		if (member) {
-			this.emit('addUser', member);
+			this.emit('refreshUser', member);
 		}
 
 		//console.log("Connected: " + this.socket.id);
