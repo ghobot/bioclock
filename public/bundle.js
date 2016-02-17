@@ -24697,6 +24697,7 @@
 	var Users = __webpack_require__(269);
 	var Dish = __webpack_require__(273);
 	var Info = __webpack_require__(274);
+	var Whoops404 = __webpack_require__(275);
 
 	var routes = React.createElement(
 	  Route,
@@ -24704,6 +24705,7 @@
 	  React.createElement(Route, { path: 'info', component: Info }),
 	  React.createElement(Route, { path: 'dish', component: Dish }),
 	  React.createElement(Route, { path: 'users', component: Users }),
+	  React.createElement(Route, { path: '*', component: Whoops404 }),
 	  React.createElement(IndexRoute, { component: Users })
 	);
 
@@ -24733,8 +24735,9 @@
 				users: []
 			};
 		},
+
+		//listeners to events from server with their respective event handlers
 		componentWillMount: function componentWillMount() {
-			//listeners to events from server with their respective event handlers
 			this.socket = io('http://localhost:4000'); //this creates a socket at our localhost
 			this.socket.on('connect', this.connect); //after this socket is connected, we will ruin a custom connect function
 			this.socket.on('disconnect', this.disconnect);
@@ -24775,7 +24778,8 @@
 			});
 		},
 		joined: function joined(member) {
-			sessionStorage.setItem('member', JSON.stringify(member)); //adds a member node to session storage in JSON format 	
+			//adds a member node to session storage in JSON format 	
+			sessionStorage.setItem('member', JSON.stringify(member));
 			this.setState({
 				member: member
 			});
@@ -24797,14 +24801,15 @@
 			});
 		},
 		render: function render() {
+			var routes = this.props.children;
+
 			// all of the props passed down to the components	
 			return React.createElement(
 				'div',
 				null,
 				React.createElement(Header, { title: this.state.title, status: this.state.status }),
-				React.cloneElement(this.props.children, {
+				routes && React.cloneElement(routes, { emit: this.emit,
 					status: this.state.status,
-					emit: this.emit,
 					member: this.state.member,
 					users: this.state.users,
 					servings: this.state.servings
@@ -32451,21 +32456,25 @@
 		},
 		render: function render() {
 			return React.createElement(
-				'header',
-				{ className: 'row' },
+				'div',
+				null,
 				React.createElement(
-					'div',
-					{ className: 'col-xs-10' },
+					'header',
+					{ className: 'row' },
 					React.createElement(
-						'h1',
-						null,
-						this.props.title
+						'div',
+						{ className: 'col-xs-10' },
+						React.createElement(
+							'h1',
+							null,
+							this.props.title
+						)
+					),
+					React.createElement(
+						'div',
+						{ className: 'col-xs-2' },
+						React.createElement('span', { id: 'connection-status', className: this.props.status })
 					)
-				),
-				React.createElement(
-					'div',
-					{ className: 'col-xs-2' },
-					React.createElement('span', { id: 'connection-status', className: this.props.status })
 				)
 			);
 		}
@@ -32598,7 +32607,8 @@
 					React.createElement('input', { ref: 'Username',
 						className: 'form-control',
 						placeholder: 'Enter your name',
-						required: true })
+						required: true
+					})
 				),
 				React.createElement(
 					'button',
@@ -32664,9 +32674,18 @@
 		displayName: 'Dish',
 		render: function render() {
 			return React.createElement(
-				'h1',
+				'div',
 				null,
-				'Dish'
+				React.createElement(
+					'h1',
+					null,
+					'Dish'
+				),
+				React.createElement(
+					'p',
+					null,
+					'This is the main animation.'
+				)
 			);
 		}
 	});
@@ -32685,14 +32704,60 @@
 		displayName: 'Info',
 		render: function render() {
 			return React.createElement(
-				'h1',
+				'div',
 				null,
-				'Info'
+				React.createElement(
+					'h1',
+					null,
+					'Info'
+				),
+				React.createElement(
+					'p',
+					null,
+					'This is information about the app'
+				)
 			);
 		}
 	});
 
 	module.exports = Info;
+
+/***/ },
+/* 275 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var Link = ReactRouter.Link;
+
+	var Whoops404 = React.createClass({
+		displayName: 'Whoops404',
+		render: function render() {
+			return React.createElement(
+				'div',
+				{ id: 'not-found' },
+				React.createElement(
+					'h1',
+					null,
+					'Whoops...'
+				),
+				React.createElement(
+					'p',
+					null,
+					'We cannot find the page that you requested.'
+				),
+				React.createElement(
+					Link,
+					{ to: '/users' },
+					'Return to Users.'
+				)
+			);
+		}
+	});
+
+	module.exports = Whoops404;
 
 /***/ }
 /******/ ]);

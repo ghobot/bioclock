@@ -91,18 +91,21 @@ const APP = React.createClass({
 	 },
 
 	render() {	
+		const routes = this.props.children;
+
 		// all of the props passed down to the components	
 		return (
-			<div>
-				
+			<div>				
+
 				<Header title={this.state.title} status={this.state.status}/>				
-				{React.cloneElement(this.props.children, { 
-					status: this.state.status,
-					emit : this.emit,
-					member : this.state.member,
-					users: this.state.users,
-					servings: this.state.servings
-				})}
+				{routes && React.cloneElement(routes, 
+					{emit : this.emit,
+						status: this.state.status,
+						member : this.state.member,
+						users: this.state.users,
+						servings: this.state.servings
+					}
+				)}
 			</div>
 		);
 	}

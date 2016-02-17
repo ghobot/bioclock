@@ -1,5 +1,11 @@
 'use strict';
 
+					status: this.state.status,
+					emit : this.emit,
+					member : this.state.member,
+					users: this.state.users,
+					servings: this.state.servings
+
 
 var React = require('react');
 var ReactDOM = require('react-dom');

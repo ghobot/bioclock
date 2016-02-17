@@ -1,19 +1,22 @@
-var React = require('react');
-var ReactRouter = require('react-router');
-var Router = ReactRouter.Router;
-var Route = ReactRouter.Route;
-var IndexRoute = ReactRouter.IndexRoute;
+const React = require('react');
+const ReactRouter = require('react-router');
+const Router = ReactRouter.Router;
+const Route = ReactRouter.Route;
+const IndexRoute = ReactRouter.IndexRoute;
 
-var APP = require('../components/APP');
-var Users = require('../components/Users');
-var Dish = require('../components/Dish');
-var Info = require('../components/Info');
+const APP = require('../components/APP');
+const Users = require('../components/Users');
+const Dish = require('../components/Dish');
+const Info = require('../components/Info');
+const Whoops404 = require('../components/Whoops404');
 
-var routes = (
+
+const routes = (
 	<Route path="/" component={APP}>	
   		<Route path="info" component={Info}/>
   		<Route path="dish" component={Dish}/>
   		<Route path="users" component={Users}/>
+  		<Route path="*" component={Whoops404}/>
   		<IndexRoute component={Users}/>
 	</Route>
 );
