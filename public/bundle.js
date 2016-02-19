@@ -24738,7 +24738,7 @@
 
 		//listeners to events from server with their respective event handlers
 		componentWillMount: function componentWillMount() {
-			this.socket = io('http://localhost:4000'); //this creates a socket at our localhost
+			this.socket = io('http://localhost:4000/main'); //this creates a socket at our localhost in the main namespace
 			this.socket.on('connect', this.connect); //after this socket is connected, we will ruin a custom connect function
 			this.socket.on('disconnect', this.disconnect);
 			this.socket.on('welcome', this.welcome);
@@ -32693,11 +32693,6 @@
 					'h1',
 					null,
 					'Dish'
-				),
-				React.createElement(
-					'p',
-					null,
-					'This is the main animation.'
 				)
 			);
 		}
