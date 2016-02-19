@@ -11,7 +11,7 @@ const title = 'BioClock';
 app.use(express.static('./public')); //middleware to serve static links
 app.use(express.static('./node_modules/bootstrap/dist'));
 
-const server = app.listen(4000);
+const server = app.listen(process.env.PORT || 4000);
 const io = require('socket.io').listen(server);
 
 const main = io.of('/main');
