@@ -2,7 +2,7 @@
 const React = require ('react');
 const Display = require('./parts/Display');
 const Join = require('./parts/Join');
-const Addreagent = require('./parts/AddReagent');
+const Addreagent = require('./parts/Addreagent');
 
 const Users = React.createClass({	
 	render() {
