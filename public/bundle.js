@@ -32540,7 +32540,7 @@
 								'h4',
 								null,
 								this.props.servings,
-								' doses added to the dish.'
+								' doses added to the dish...'
 							)
 						)
 					),
@@ -32648,7 +32648,7 @@
 			var serving = 1;
 
 			var name = JSON.parse(sessionStorage.getItem('member'));
-			var _message = name.name + " has added Reagent to the dish.";
+			var _message = name.name + " has added reagent to the dish.";
 
 			this.props.emit('addReagent', {
 				name: name.name,
