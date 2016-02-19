@@ -122,4 +122,4 @@ dish.on('connection', function(socket){
 
 });
 
-console.log('The app is running at http://localhost:4000');
+console.log('The app is running at https://localhost:4000');
