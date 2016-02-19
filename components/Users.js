@@ -22,7 +22,7 @@ const Users = React.createClass({
 								{this.props.users.length} users connected.
 							</h4>
 							<h4> 
-								{this.props.servings} doses added to the dish. 
+								{this.props.servings} doses added to the dish... 
 							</h4>
 							
 						</div>

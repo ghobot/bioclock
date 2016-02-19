@@ -9,8 +9,8 @@ const Addreagent = React.createClass({
 		
 		
 		const name = JSON.parse(sessionStorage.getItem('member')); 
-		const _message =  name.name + " has added Reagent to the dish.";
-		
+		const _message =  name.name + " has added reagent to the dish.";
+
 
 		this.props.emit('addReagent', 
 			{
