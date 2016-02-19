@@ -10,7 +10,7 @@ const Join = React.createClass({
 		this.props.emit(
 			'addUser', 
 			{
-				user : userName
+				name : userName
 			});
 	},
 

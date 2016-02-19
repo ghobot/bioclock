@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const connections = [];
 const users = [];
+const totalServings = [];
 const _ = require('underscore');
 
 const title = 'BioClock';
@@ -32,14 +33,15 @@ io.sockets.on('connection', function(socket){
 	socket.on('addUser' , function(payload) {
 		const newUser = {
 			id: this.id,
-			user: payload.user
+			name: payload.name
 		};
 
 		this.emit('joined', newUser);
 		users.push(newUser);
 		io.sockets.emit('users', users);
+		io.sockets.emit('totalServings', totalServings);
 		
-		console.log("%s joined.", newUser.user);
+		console.log("%s joined.", newUser.name);
 
 	});
 
@@ -48,20 +50,30 @@ io.sockets.on('connection', function(socket){
 
 		this.emit('joined', payload);
 		users.push(payload);
-		//io.sockets.emit('users', users);
-		console.log("%s refreshed. %s", payload.user, payload.id);
+		io.sockets.emit('users', users);
+		console.log("%s refreshed. %s", payload.name, payload.id);
 
 	});
 
 	socket.on('addReagent' , function(payload) {
+		//totalServings += payload.serving;
+
 		const User = {
 			id: this.id,
 			message: payload.message,
-			serving: payload.serving
+			serving: payload.serving,
+			name: payload.name,
+			totalServings: totalServings
 		};
+
+		totalServings.push(payload.serving);
+
 		this.emit('addedReagent', User);
+
+
+		io.sockets.emit('totalServings', totalServings);
 		
-		console.log("%s", payload.message);
+		console.log("%s , %s total doses", payload.message, totalServings.length);
 	});
 
 	socket.emit('welcome', {

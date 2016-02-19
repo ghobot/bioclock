@@ -4,14 +4,17 @@ const React = require('react');
 const Addreagent = React.createClass({
 	
 	addReagent() {
-		//var userName = {this.props.member.name};
-		const _message = "A user has added Reagent to the dish.";
+		
 		let serving = 1;
 		
-		console.log(_message);
 		
+		const name = JSON.parse(sessionStorage.getItem('member')); 
+		const _message =  name.name + " has added Reagent to the dish.";
+		
+
 		this.props.emit('addReagent', 
 			{
+				name : name.name,
 				add : serving,
 				message : _message
 			});

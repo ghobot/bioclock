@@ -12,7 +12,7 @@ const APP = React.createClass({
 			title: '',
 			member: {},
 			memberAddingReagent: {},
-			servings: servings,
+			servings: 0,
 			users: []
 		};
 	},
@@ -25,6 +25,7 @@ const APP = React.createClass({
 		this.socket.on('joined', this.joined);
 		this.socket.on('addedReagent', this.addedReagent);  
 		this.socket.on('users', this.updateUsers );
+		this.socket.on('totalServings' , this.updateTotalServings);
 	},
 
 	emit(eventName, payload) {
@@ -45,7 +46,7 @@ const APP = React.createClass({
 
 		// if a member exists, just join that member again
 		if (member) {
-			this.emit('refreshUser', member);
+			this.emit('addUser', member);
 		}
 
 		//console.log("Connected: " + this.socket.id);
@@ -82,12 +83,21 @@ const APP = React.createClass({
 	addedReagent(payload){	 	
 
 	 	this.setState({
-	 		memberAddingReagent: payload.id
+	 		memberAddingReagent : payload.name
+
 	 	});
 
+	 	//console.log("%s added reagent" , payload.name);
+
+	 	// this.setState({
+	 	// 	servings: (servings += 1)
+	 	// });
+	 },
+
+	 updateTotalServings(payload){
 	 	this.setState({
-	 		servings: (servings += 1)
-	 	});
+	 		servings: payload.length
+	 	})
 	 },
 
 	render() {	
@@ -103,7 +113,8 @@ const APP = React.createClass({
 						status: this.state.status,
 						member : this.state.member,
 						users: this.state.users,
-						servings: this.state.servings
+						servings: this.state.servings,
+						memberAddingReagent: this.state.memberAddingReagent
 					}
 				)}
 			</div>
